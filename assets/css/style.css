@@ -96,9 +96,41 @@ h3{font-size:20px;margin:0 0 6px}
   .profile{grid-template-columns:80px 1fr}
   .logo-title{font-size:64px}
 }
-@media (max-width: 560px){
-  .menu{display:none}
-  .hamburger{display:block}
+@media (max-width: 900px){
+  .site-header .nav{ position: relative; }
+
+  /* by default menu hidden on mobile */
+  .menu{
+    display: none;
+    position: absolute;
+    top: 64px;   /* header ke niche khulega */
+    right: 20px;
+    left: 20px;
+    background: var(--bg-2);
+    border: 1px solid var(--stroke);
+    border-radius: 12px;
+    padding: 8px;
+    flex-direction: column;
+    gap: 6px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.45);
+    z-index: 60;
+  }
+
+  /* jab hamburger (checkbox) click hoga */
+  #nav-toggle:checked ~ .menu{
+    display: flex;
+  }
+
+  .hamburger{display:block; cursor:pointer}
+  .hamburger span{display:block;width:26px;height:2px;background:#fff;margin:6px 0}
+
+  .menu a{
+    padding: 12px 14px;
+    border-radius: 10px;
+  }
+  .menu a:hover{background: rgba(255,255,255,.06)}
+
   .cards{grid-template-columns:1fr}
   .logo-title{font-size:48px}
 }
+
