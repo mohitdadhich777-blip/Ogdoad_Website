@@ -59,7 +59,11 @@ h3{font-size:20px;margin:0 0 6px}
 .card .card-img{height:150px;background:#0b0b0f;border-bottom:1px solid var(--stroke)}
 .card .card-body{padding:14px}
 
-.card.xl .card-img{height:260px}
+.card.xl .card-img {
+  height: 260px;
+  object-fit: cover;
+}
+
 .cover-ep1{background:linear-gradient(180deg,rgba(255,42,79,.2),rgba(0,0,0,.2)), radial-gradient(600px 300px at 70% 0%, rgba(255,77,77,.25), transparent), linear-gradient(90deg,#191922,#0c0c0f)}
 
 .about,.families,.episodes{padding:44px 0}
@@ -72,8 +76,23 @@ h3{font-size:20px;margin:0 0 6px}
 .episodes-grid{display:grid;grid-template-columns:1fr;gap:22px;padding:44px 0}
 .episode{display:grid;grid-template-columns:220px 1fr;gap:18px;background:var(--card);border:1px solid var(--stroke);border-radius:16px;padding:16px}
 .episode.locked{opacity:.65}
-.cover.tall{height:280px}
-.cover{background:#0b0b0f;border-radius:12px}
+/* Episode cover images (as <img>) */
+.cover {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+  border-radius: 12px;
+  background: #0b0b0f;            /* fallback if image missing */
+  border: 1px solid var(--stroke); /* subtle frame */
+}
+
+.cover.tall {
+  height: 280px;                   /* episodes page */
+}
+
+/* (Optional) remove dotted placeholder border if any */
+.placeholder::after { display: none; }
 
 .shop-grid{padding:32px 0}
 
