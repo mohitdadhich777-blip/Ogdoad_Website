@@ -56,12 +56,18 @@ h3{font-size:20px;margin:0 0 6px}
 .card{background:var(--card);border:1px solid var(--stroke);border-radius:16px;overflow:hidden;display:flex;flex-direction:column;transition:.2s}
 .card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.18)}
 .card.locked .card-img{filter:grayscale(1);opacity:.5}
-.card .card-img{height:150px;background:#0b0b0f;border-bottom:1px solid var(--stroke)}
+.card .card-img{
+  width:100%;
+  height:150px;
+  object-fit:cover;
+  display:block;
+  border-bottom:1px solid var(--stroke);
+  background:#0b0b0f; /* fallback */
+}
 .card .card-body{padding:14px}
 
-.card.xl .card-img {
-  height: 260px;
-  object-fit: cover;
+.card.xl .card-img{
+  height:260px;       /* home page XL episode card height */
 }
 
 .cover-ep1{background:linear-gradient(180deg,rgba(255,42,79,.2),rgba(0,0,0,.2)), radial-gradient(600px 300px at 70% 0%, rgba(255,77,77,.25), transparent), linear-gradient(90deg,#191922,#0c0c0f)}
