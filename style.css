@@ -127,3 +127,64 @@ h3{font-size:20px;margin:0 0 6px}
   .cards{grid-template-columns:1fr}
   .logo-title{font-size:48px}
 }
+/* ---------- PRO POLISH PACK ---------- */
+
+/* Type scale + containers */
+:root{
+  --bg:#0c0c0f; --bg-2:#111116; --text:#e6e6f0; --muted:#9aa0aa;
+  --accent:#ff2a4f; --accent-2:#ff4d4d; --card:#15151a; --stroke:#22222b; --ring: rgba(255,42,79,.35);
+  --shadow: 0 10px 30px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.02);
+}
+h1{letter-spacing:1px}
+h2{letter-spacing:.6px}
+
+/* Section divider (cinematic) */
+.section-divider{
+  height:1px; margin:44px 0; border:0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
+}
+
+/* Gradient border utility */
+.gborder{
+  position: relative; border-radius:16px; background:var(--card); z-index:0;
+}
+.gborder::before{
+  content:""; position:absolute; inset:0; border-radius:16px; padding:1px; background:
+    linear-gradient(135deg, rgba(255,42,79,.55), rgba(255,77,77,.22));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude; z-index:-1;
+}
+
+/* Card depth + hover */
+.card{box-shadow: var(--shadow)}
+.card:hover{transform:translateY(-3px) scale(1.01); border-color: rgba(255,255,255,.24)}
+
+/* Card images fit (home + episodes) */
+.card .card-img{width:100%; height:150px; object-fit:cover; display:block; border-bottom:1px solid var(--stroke); background:#0b0b0f}
+.card.xl .card-img{height:260px}
+
+/* Locked badge */
+.badge{display:inline-flex; align-items:center; gap:8px; font-size:12px; padding:4px 8px; border-radius:999px;
+  background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); color:#fff}
+.badge.locked{background:rgba(255,42,79,.12); border-color:rgba(255,42,79,.3)}
+
+/* Stats strip */
+.stats{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:20px 0}
+.stat{background:var(--card); border:1px solid var(--stroke); border-radius:14px; padding:14px; text-align:center}
+.stat h3{font-size:28px; margin:0}
+.stat p{margin:4px 0 0; color:var(--muted); font-size:13px}
+
+/* Mobile menu reveal animation */
+@media (max-width: 900px){
+  .menu{ transform-origin: top right; transform: scale(.98) translateY(-6px); opacity:0; transition:.18s ease-out }
+  #nav-toggle:checked ~ .menu{ display:flex; transform: scale(1) translateY(0); opacity:1 }
+}
+
+/* Prefer reduced motion */
+@media (prefers-reduced-motion: reduce){
+  *{animation:none!important; transition:none!important}
+}
+
+/* Images lazy style (optional fade-in) */
+img[loading="lazy"]{opacity:.001; transition:opacity .4s ease}
+img[loading="lazy"].loaded{opacity:1}

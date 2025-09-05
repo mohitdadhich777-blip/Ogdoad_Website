@@ -12,6 +12,21 @@
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml"/>
 <script defer src="assets/js/main.js"></script>
 
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CreativeWorkSeries",
+  "name": "OGDOAD",
+  "genre": "Crime, Thriller, Noir",
+  "url": "https://mionatu.com/",
+  "image": "https://mionatu.com/assets/img/ogdoad-cover.jpg",
+  "creator": { "@type": "Organization", "name": "Mionatu Studio",
+    "sameAs": ["https://www.instagram.com/mionatu"] },
+  "inLanguage": "en",
+  "description": "Eight families. One empire. A war without borders. A cinematic crime-thriller comic set across Europe."
+}
+</script>
+
 </head>
 <body>
 <header class="site-header">
@@ -49,6 +64,14 @@
   <h2>About the Series</h2>
   <p class="lead">For five years, the streets of Europe were quiet. No bullets. No betrayals. Just shadows moving in silence. But peace never lasts in the underworld. And this time... it's not just war. It's the return of something older. Deadlier. <strong>OGDOAD</strong>.</p>
 </section>
+<!-- INSERT STATS STRIP HERE -->
+<hr class="section-divider">
+<section class="container stats">
+  <div class="stat gborder"><h3>8</h3><p>Crime Families</p></div>
+  <div class="stat gborder"><h3>12+</h3><p>European Cities</p></div>
+  <div class="stat gborder"><h3>1</h3><p>Silent War</p></div>
+</section>
+<hr class="section-divider">
 
 <section class="families container">
   <div class="section-head">
@@ -57,28 +80,28 @@
   </div>
   <div class="cards">
     <a class="card" href="characters.html#solvang">
-      <img src="assets/img/magnus-solvang.png" class="avatar" alt="Magnus Solvang">
+      <img src="assets/img/magnus-solvang.png" class="avatar" alt="Magnus Solvang" loading="lazy">
       <div class="card-body">
         <h3>Solvang — Norway</h3>
         <p>The Anchor of the North</p>
       </div>
     </a>
     <a class="card" href="characters.html#bratva">
-      <img src="assets/img/dimtri-bratva.png" class="avatar" alt="Dimitri Bratva">
+      <img src="assets/img/dimtri-bratva.png" class="avatar" alt="Dimitri Bratva" loading="lazy">
       <div class="card-body">
         <h3>Bratva — Russia</h3>
         <p>The Wolf in the Black Leather</p>
       </div>
     </a>
     <a class="card" href="characters.html#ibanez">
-      <img src="assets/img/diego-ibanez.png" class="avatar" alt="Diego Ibáñez">
+      <img src="assets/img/diego-ibanez.png" class="avatar" alt="Diego Ibáñez" loading="lazy">
       <div class="card-body">
         <h3>Ibáñez — Spain</h3>
         <p>The Face of Fire & Powder</p>
       </div>
     </a>
     <a class="card" href="characters.html#oconnor">
-      <img src="assets/img/declan-o-connor.png" class="avatar" alt="Declan O’Connor">
+      <img src="assets/img/declan-o-connor.png" class="avatar" alt="Declan O’Connor" loading="lazy">
       <div class="card-body">
         <h3>O’Connor — Ireland</h3>
         <p>Whiskey and Gunpowder</p>
@@ -105,6 +128,7 @@
       </div>
     </a>
     <!-- EPISODE 2 (locked) -->
+    <span class="badge locked">Locked</span>
     <div class="card locked">
       <img src="assets/img/episode-2-coming-soon.png"
            class="card-img"
