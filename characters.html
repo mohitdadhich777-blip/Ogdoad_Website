@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -13,30 +14,12 @@
 <script defer src="assets/js/main.js"></script>
 
 </head>
-<!-- FOLLOW MIONATU — Bottom Bar -->
-<div class="follow-bar bottom">
-  <div class="container inner">
-    <div class="label">FOLLOW MIONATU</div>
-    <div class="follow-icons">
-      <a href="https://www.instagram.com/mionatu" target="_blank" aria-label="Instagram">
-        <svg viewBox="0 0 24 24"><path d="M7 2h10a5 5 0 0 1 5 5v10a5 5 0 0 1-5 5H7a5 5 0 0 1-5-5V7a5 5 0 0 1 5-5zm5 3.5A5.5 5.5 0 1 1 6.5 13 5.5 5.5 0 0 1 12 7.5zM18 6.75a1.25 1.25 0 1 1-1.25 1.25A1.25 1.25 0 0 1 18 6.75z"/></svg>
-      </a>
-      <a href="https://www.youtube.com/" target="_blank" aria-label="YouTube">
-        <svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.2 3.5 12 3.5 12 3.5s-7.2 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c2.2.6 9.4.6 9.4.6s7.2 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.75 15.5v-7l6 3.5-6 3.5z"/></svg>
-      </a>
-    </div>
-  </div>
-</div>
 <body>
 <header class="site-header">
   <div class="container nav">
-    <a class="brand mionatu" href="index.html" aria-label="Mionatu">MIONATU</a>
-
-    <!-- Mobile toggle -->
+    <a class="brand" href="index.html">OGDOAD</a>
     <input id="nav-toggle" type="checkbox" />
     <label class="hamburger" for="nav-toggle"><span></span><span></span><span></span></label>
-
-    <!-- Centered Menu (desktop), dropdown (mobile) -->
     <nav class="menu">
       <a href="index.html">Home</a>
       <a href="characters.html">Characters</a>
@@ -44,9 +27,6 @@
       <a href="trailer.html">Trailer</a>
       <a href="shop.html">Shop</a>
     </nav>
-
-    <!-- Right empty slot (kept for alignment parity w/ Marvel) -->
-    <div class="right-slot"></div>
   </div>
 </header>
 
@@ -58,10 +38,8 @@
 </section>
 
 <section class="container grid-characters">
-
-  <!-- Magnus Solvang -->
-  <a href="characters/magnus.html" class="profile">
-    <img src="assets/img/magnus-solvang.png" class="avatar" alt="Magnus Solvang">
+  <article id="solvang" class="profile">
+    <img src="assets/img/magnus-solvang.png" class="avatar" alt="Magnus Solvang" loading="lazy">
     <div>
       <h2>Magnus Solvang <span class="tag">Norway</span></h2>
       <p class="muted">The Fjord Wolf. Ice in his veins, fire in his empire.</p>
@@ -70,49 +48,22 @@
         <li>Ally: Ingrid Solvang</li>
       </ul>
     </div>
+  </article>
 
-    <!-- POPUP CARD -->
-    <div class="profile-pop">
-      <div class="pop-head">
-        <img src="assets/img/magnus-solvang.png" alt="Magnus Solvang">
-        <div>
-          <h4>Magnus Solvang</h4>
-          <span class="tag">Norway</span>
-        </div>
-      </div>
-      <p>The Fjord Wolf. Cold-chain routes across the North Sea.</p>
-      <a class="btn small" href="characters/magnus.html">Open Profile</a>
-    </div>
-  </a>
-
-  <!-- Dmitri Voronov -->
-  <a href="characters/dmitri.html" class="profile">
-    <img src="assets/img/dmitri-voronov.png" class="avatar" alt="Dmitri Voronov">
+  <article id="bratva" class="profile">
+    <img src="assets/img/dimtri-bratva.png" class="avatar" alt="Dimitri Bratva" loading="lazy">
     <div>
-      <h2>Dmitri Voronov <span class="tag">Russia</span></h2>
+      <h2>Dmitri Bratva <span class="tag">Russia</span></h2>
       <p class="muted">Cold strategy. War-forged discipline.</p>
       <ul class="meta">
         <li>Syndicate: Bratva</li>
-        <li>Kin: Svetlana Voronova</li>
+        <li>Kin: Svetlana Bratva</li>
       </ul>
     </div>
+  </article>
 
-    <div class="profile-pop">
-      <div class="pop-head">
-        <img src="assets/img/dmitri-voronov.png" alt="Dmitri Voronov">
-        <div>
-          <h4>Dmitri Voronov</h4>
-          <span class="tag">Russia</span>
-        </div>
-      </div>
-      <p>Bratva mastermind. Ruthless and precise.</p>
-      <a class="btn small" href="characters/dmitri.html">Open Profile</a>
-    </div>
-  </a>
-
-  <!-- Diego Ibáñez -->
-  <a href="characters/diego.html" class="profile">
-    <img src="assets/img/diego-ibanez.png" class="avatar" alt="Diego Ibáñez">
+  <article id="ibanez" class="profile">
+    <img src="assets/img/diego-ibanez.png" class="avatar" alt="Diego Ibáñez" loading="lazy">
     <div>
       <h2>Diego Ibáñez <span class="tag">Spain</span></h2>
       <p class="muted">Seville’s silent storm.</p>
@@ -121,23 +72,10 @@
         <li>Kin: Isabella Ibáñez</li>
       </ul>
     </div>
+  </article>
 
-    <div class="profile-pop">
-      <div class="pop-head">
-        <img src="assets/img/diego-ibanez.png" alt="Diego Ibáñez">
-        <div>
-          <h4>Diego Ibáñez</h4>
-          <span class="tag">Spain</span>
-        </div>
-      </div>
-      <p>Seville’s silent storm. Ports and shadows.</p>
-      <a class="btn small" href="characters/diego.html">Open Profile</a>
-    </div>
-  </a>
-
-  <!-- Declan O’Connor -->
-  <a href="characters/declan.html" class="profile pop-left">
-    <img src="assets/img/declan-oconnor.png" class="avatar" alt="Declan O’Connor">
+  <article id="oconnor" class="profile">
+    <img src="assets/img/declan-o-connor.png" class="avatar" alt="Declan O’Connor" loading="lazy">
     <div>
       <h2>Declan O’Connor <span class="tag">Ireland</span></h2>
       <p class="muted">Emerald fire.</p>
@@ -146,23 +84,10 @@
         <li>Kin: Siobhan O’Connor</li>
       </ul>
     </div>
+  </article>
 
-    <div class="profile-pop">
-      <div class="pop-head">
-        <img src="assets/img/declan-oconnor.png" alt="Declan O’Connor">
-        <div>
-          <h4>Declan O’Connor</h4>
-          <span class="tag">Ireland</span>
-        </div>
-      </div>
-      <p>Emerald fire. Arms and docks under control.</p>
-      <a class="btn small" href="characters/declan.html">Open Profile</a>
-    </div>
-  </a>
-
-  <!-- Yuri Volkov -->
-  <a href="characters/yuri.html" class="profile">
-    <img src="assets/img/yuri-volkov.png" class="avatar" alt="Yuri Volkov">
+  <article id="volkov" class="profile">
+    <img src="assets/img/yuri-volkov.png" class="avatar" alt="Yuri Volkov" loading="lazy">
     <div>
       <h2>Yuri Volkov <span class="tag">Ukraine</span></h2>
       <p class="muted">The Iron Ghost.</p>
@@ -171,23 +96,10 @@
         <li>Kin: Anya Volkova</li>
       </ul>
     </div>
+  </article>
 
-    <div class="profile-pop">
-      <div class="pop-head">
-        <img src="assets/img/yuri-volkov.png" alt="Yuri Volkov">
-        <div>
-          <h4>Yuri Volkov</h4>
-          <span class="tag">Ukraine</span>
-        </div>
-      </div>
-      <p>The Iron Ghost. Rail and river corridors.</p>
-      <a class="btn small" href="characters/yuri.html">Open Profile</a>
-    </div>
-  </a>
-
-  <!-- Ricardo de Silva -->
-  <a href="characters/ricardo.html" class="profile">
-    <img src="assets/img/ricardo-de-silva.png" class="avatar" alt="Ricardo de Silva">
+  <article id="desilva" class="profile">
+    <img src="assets/img/ricardo-de-silva.png" class="avatar" alt="Ricardo de Silva" loading="lazy">
     <div>
       <h2>Ricardo de Silva <span class="tag">Italy</span></h2>
       <p class="muted">Old blood, new rules.</p>
@@ -196,23 +108,10 @@
         <li>Kin: Elena de Silva</li>
       </ul>
     </div>
+  </article>
 
-    <div class="profile-pop">
-      <div class="pop-head">
-        <img src="assets/img/ricardo-de-silva.png" alt="Ricardo de Silva">
-        <div>
-          <h4>Ricardo de Silva</h4>
-          <span class="tag">Italy</span>
-        </div>
-      </div>
-      <p>Old blood, new rules. Naples to Milan.</p>
-      <a class="btn small" href="characters/ricardo.html">Open Profile</a>
-    </div>
-  </a>
-
-  <!-- Henrik Andersen -->
-  <a href="characters/henrik.html" class="profile">
-    <img src="assets/img/henrik-andersen.png" class="avatar" alt="Henrik Andersen">
+  <article id="andersen" class="profile">
+    <img src="assets/img/henrik-andersen.png" class="avatar" alt="Henrik Andersen" loading="lazy">
     <div>
       <h2>Henrik Andersen <span class="tag">Denmark</span></h2>
       <p class="muted">Calculated quiet.</p>
@@ -221,23 +120,10 @@
         <li>Kin: Astrid Andersen</li>
       </ul>
     </div>
+  </article>
 
-    <div class="profile-pop">
-      <div class="pop-head">
-        <img src="assets/img/henrik-andersen.png" alt="Henrik Andersen">
-        <div>
-          <h4>Henrik Andersen</h4>
-          <span class="tag">Denmark</span>
-        </div>
-      </div>
-      <p>Calculated quiet. Maritime insurance shells.</p>
-      <a class="btn small" href="characters/henrik.html">Open Profile</a>
-    </div>
-  </a>
-
-  <!-- Viktor Chernov -->
-  <a href="characters/viktor.html" class="profile">
-    <img src="assets/img/viktor-chernov.png" class="avatar" alt="Viktor Chernov">
+  <article id="chernov" class="profile">
+    <img src="assets/img/viktor-chernov.png" class="avatar" alt="Viktor Chernov" loading="lazy">
     <div>
       <h2>Viktor Chernov <span class="tag">Poland</span></h2>
       <p class="muted">Prussian ice. Polish steel.</p>
@@ -246,20 +132,7 @@
         <li>Kin: Natalya Chernova</li>
       </ul>
     </div>
-
-    <div class="profile-pop">
-      <div class="pop-head">
-        <img src="assets/img/viktor-chernov.png" alt="Viktor Chernov">
-        <div>
-          <h4>Viktor Chernov</h4>
-          <span class="tag">Poland</span>
-        </div>
-      </div>
-      <p>Prussian ice, Polish steel. Rails and choke points.</p>
-      <a class="btn small" href="characters/viktor.html">Open Profile</a>
-    </div>
-  </a>
-
+  </article>
 </section>
 
 <footer class="site-footer">
