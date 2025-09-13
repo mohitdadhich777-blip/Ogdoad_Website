@@ -133,4 +133,56 @@ h3{font-size:20px;margin:0 0 6px}
   .cards{grid-template-columns:1fr}
   .logo-title{font-size:48px}
 }
+/* ===== Sticky Marvel-style Header ===== */
+.site-header{
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(12,12,15,.7);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--stroke);
+}
+.site-header .nav{
+  display: grid;
+  grid-template-columns: 180px 1fr 180px; /* left logo | center menu | right empty */
+  align-items: center;
+  height: 64px;
+  gap: 12px;
+}
 
+/* Brand -> MIONATU block (Marvel vibe) */
+.brand.mionatu{
+  display:inline-flex; align-items:center; justify-content:center;
+  height: 36px; padding: 0 12px;
+  background: #E62429; color: #fff; font-weight: 900;
+  letter-spacing: .12em; font-size: 16px; border-radius: 4px;
+  text-decoration: none;
+}
+
+/* Centered desktop menu */
+.menu{
+  justify-self: center;
+  display: flex; align-items: center; gap: 24px;
+}
+.menu a{ font-weight: 600; }
+
+/* right slot empty (reserve alignment like Marvel’s right icons) */
+.nav .right-slot{ justify-self: end; }
+
+/* Mobile: dropdown via checkbox (you already have this) */
+#nav-toggle{ position: absolute; left: -9999px; }
+.hamburger{ display:none; cursor:pointer; padding:10px; border-radius:10px }
+.hamburger span{ display:block; width:26px; height:2px; background:#fff; margin:6px 0; transition:.2s }
+
+@media (max-width: 900px){
+  .site-header .nav{ grid-template-columns: 1fr 40px; }
+  .brand.mionatu{ justify-self: start; }
+  .hamburger{ display:block; justify-self: end; }
+
+  .menu{
+    display:none; position:absolute; top:64px; left:20px; right:20px;
+    background: var(--bg-2); border:1px solid var(--stroke);
+    border-radius: 12px; padding: 10px; flex-direction: column; gap: 8px;
+    box-shadow: 0 20px 60px rgba(0,0,0,.45); z-index: 60;
+  }
+  #nav-toggle:checked ~ .menu{ display:flex; }
+  .nav .right-slot{ display:none; }
+}
