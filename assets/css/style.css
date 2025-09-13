@@ -186,3 +186,82 @@ h3{font-size:20px;margin:0 0 6px}
   #nav-toggle:checked ~ .menu{ display:flex; }
   .nav .right-slot{ display:none; }
 }
+/* ===== Character hover pop (desktop) ===== */
+.profile{ position:relative; overflow:visible }
+.profile-pop{
+  position:absolute; left:calc(100% + 10px); top:0; width:320px;
+  background:var(--card); border:1px solid var(--stroke); border-radius:14px;
+  box-shadow:0 18px 60px rgba(0,0,0,.5);
+  padding:12px; display:none; z-index:80;
+}
+.profile:hover .profile-pop{ display:block }
+.profile-pop .pop-head{ display:flex; gap:12px; align-items:center }
+.profile-pop img{ width:72px; height:72px; object-fit:cover; border-radius:10px; border:1px solid var(--stroke) }
+.profile-pop h4{ margin:0; font-size:16px }
+.profile-pop p{ margin:6px 0 10px; color:var(--muted); font-size:13px }
+.profile-pop .btn{ padding:8px 10px; font-size:13px }
+
+@media (max-width: 1024px){
+  /* touch devices pe pop hide rakho */
+  .profile-pop{ display:none!important }
+}
+/* ===== Wide Feature Banner ===== */
+.feature-banner{ margin: 24px 0 8px; }
+.feature-banner .wrap{
+  position:relative; overflow:hidden; border-radius:16px;
+  border:1px solid var(--stroke); background:#0b0b0f;
+}
+.feature-banner img{
+  display:block; width:100%; height:auto; aspect-ratio: 16 / 6; object-fit:cover;
+}
+.feature-banner .overlay{
+  position:absolute; inset:0; display:flex; align-items:flex-end;
+  background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.55));
+  padding: 18px;
+}
+.feature-banner .overlay h3{ margin:0; font-size:22px }
+.feature-banner .overlay .btn{ margin-left:auto }
+@media (max-width: 700px){
+  .feature-banner img{ aspect-ratio: 16 / 9; }
+  .feature-banner .overlay h3{ font-size:18px }
+}
+/* ===== Bottom Follow Bar (Marvel style) ===== */
+body.has-followbar { padding-bottom: 56px; } /* content ko bar se upar push kare */
+
+.follow-bar.bottom{
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 120;
+  background: rgba(0,0,0,.88);
+  backdrop-filter: blur(6px);
+  border-top: 1px solid rgba(255,255,255,.12);
+  height: 56px;
+}
+
+.follow-bar.bottom .inner{
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between; gap: 14px;
+}
+
+.follow-bar .label{
+  color:#fff; font-weight: 900; letter-spacing:.12em; font-size:12px;
+  text-transform: uppercase;
+}
+
+.follow-icons{ display:flex; gap:12px }
+.follow-icons a{
+  display:inline-flex; align-items:center; justify-content:center;
+  width:32px; height:32px; border-radius:8px;
+  border:1px solid rgba(255,255,255,.18);
+  background:rgba(255,255,255,.06);
+  transition:.18s;
+}
+.follow-icons a:hover{ transform: translateY(-1px); border-color: rgba(255,255,255,.32) }
+.follow-icons svg{ width:16px; height:16px; fill:#fff; opacity:.92 }
+
+@media (max-width: 480px){
+  body.has-followbar { padding-bottom: 52px; }
+  .follow-bar.bottom{ height: 52px; }
+  .follow-bar.bottom .inner{ height: 52px; }
+  .follow-icons a{ width:28px; height:28px; border-radius:6px }
+  .follow-icons svg{ width:14px; height:14px }
+  .follow-bar .label{ font-size:11px; letter-spacing:.1em }
+}
