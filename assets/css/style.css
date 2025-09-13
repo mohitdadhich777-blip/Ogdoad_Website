@@ -334,7 +334,7 @@ body.has-followbar { padding-bottom: 56px; } /* content ko bar se upar push kare
   inset: 0;
   z-index: -2;
   background-size: cover;        /* ensure it covers area */
-  background-position: center top; /* center focus */
+  background-position: center center; /* center focus */
   background-repeat: no-repeat;
 }
 .mega-hero::after{
@@ -378,3 +378,31 @@ body.has-followbar { padding-bottom: 56px; } /* content ko bar se upar push kare
   .mega-hero{ min-height: 54svh; }
   .mega-hero .stack{ max-width: 92%; }
 }
+/* ===== Desktop hero fit fixes ===== */
+@media (min-width: 1024px){
+  /* 1) Desktop height thoda bada, taaki image crop kam ho */
+  .mega-hero{ min-height: 68vh; }
+
+  /* 2) Background exact centering/focus (adjust as needed) */
+  .mega-hero .bg{
+    background-size: cover;          /* keep cover */
+    background-position: center 30%; /* try 30% focus; change to 40–60% if head is higher/lower */
+    background-repeat: no-repeat;
+  }
+
+  /* 3) Optional: maintain cinematic ratio so poster dikhe zyada */
+  .mega-hero .inner{ padding-bottom: 40px; }
+}
+
+/* Ultra-wide screens (21:9 etc) — zyada crop ho to */
+@media (min-width: 1440px){
+  .mega-hero{ min-height: 60vh; }        /* thoda kam height, less vertical crop */
+  .mega-hero .bg{ background-position: center 35%; }
+}
+
+/* If your key subject is near TOP, use this instead on desktop: */
+/*
+@media (min-width: 1024px){
+  .mega-hero .bg{ background-position: center top; }
+}
+*/
