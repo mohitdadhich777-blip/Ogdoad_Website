@@ -273,3 +273,108 @@ body.has-followbar { padding-bottom: 56px; } /* content ko bar se upar push kare
   .follow-icons svg{ width:14px; height:14px }
   .follow-bar .label{ font-size:11px; letter-spacing:.1em }
 }
+/* ===== Home Kingpins: Hover Pop (desktop only) ===== */
+.cards.cards-8 { overflow: visible; }
+.cards.cards-8 .card{
+  position: relative;
+  overflow: visible; /* popup cut na ho */
+}
+
+/* hidden by default + animate */
+.card-pop{
+  position: absolute; top: 0; left: calc(100% + 10px);
+  width: 340px;
+  background: var(--card);
+  border: 1px solid var(--stroke);
+  border-radius: 14px;
+  box-shadow: 0 18px 60px rgba(0,0,0,.5);
+  padding: 12px;
+  z-index: 70;
+
+  opacity: 0; visibility: hidden;
+  transform: translateY(6px) scale(.98);
+  transition: opacity .18s ease, transform .18s ease, visibility 0s linear .18s;
+  pointer-events: none;
+}
+.cards.cards-8 .card:hover .card-pop{
+  opacity: 1; visibility: visible;
+  transform: translateY(0) scale(1);
+  transition: opacity .18s ease, transform .18s ease, visibility 0s;
+  pointer-events: auto;
+}
+
+/* popup inner */
+.card-pop .pop-head{ display:flex; gap:12px; align-items:center }
+.card-pop img{
+  width:72px; height:72px; object-fit:cover;
+  border-radius:10px; border:1px solid var(--stroke);
+}
+.card-pop h4{ margin:0; font-size:16px }
+.card-pop p{ margin:6px 0 10px; color:var(--muted); font-size:13px }
+.card-pop .btn{ padding:8px 10px; font-size:13px }
+
+/* rightmost column flips left */
+.card.pop-left .card-pop{ left:auto; right: calc(100% + 10px); }
+
+/* mobile/tablet without hover: hide */
+@media (hover: none){
+  .card-pop{ display: none !important; }
+}
+/* ===== Mega Hero (Marvel-style) ===== */
+.mega-hero{
+  position: relative; isolation: isolate;
+  min-height: 64svh; /* tall but responsive */
+  display: grid; align-items: end;
+  background: #08080a;
+  border-bottom: 1px solid var(--stroke);
+}
+/* Fix for hero background image fit */
+.mega-hero .bg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-size: cover;        /* ensure it covers area */
+  background-position: center top; /* center focus */
+  background-repeat: no-repeat;
+}
+.mega-hero::after{
+  content:""; position:absolute; inset:0; z-index:-1;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0) 20%, rgba(0,0,0,.65) 88%),
+    radial-gradient(120% 80% at 10% 10%, rgba(0,0,0,.55), transparent 60%);
+}
+.mega-hero .inner{
+  padding: 22px 0 28px;
+}
+.mega-hero .stack{
+  max-width: 720px;
+}
+.mega-hero .logo{
+  display:block; width:min(420px, 60vw);
+  height:auto; margin: 0 0 10px;
+}
+.mega-hero h1{
+  font-family: "Bebas Neue", system-ui, sans-serif;
+  letter-spacing:.02em; font-size: clamp(28px, 5vw, 46px);
+  margin: 4px 0 6px;
+}
+.mega-hero .blurb{
+  color: var(--muted); max-width: 60ch; margin: 8px 0 14px; font-size: 15px;
+}
+.mega-hero .cta{ display:flex; flex-wrap:wrap; gap:10px; }
+.mega-hero .cta .btn{ padding:12px 16px; font-weight:700 }
+.mega-hero .cta .btn.secondary{ background:transparent; border:1px solid var(--stroke) }
+
+.mega-hero .dots{
+  display:flex; gap:8px; margin-top:14px;
+}
+.mega-hero .dot{
+  width:8px; height:8px; border-radius:999px;
+  background: rgba(255,255,255,.35);
+}
+.mega-hero .dot.active{ background:#fff; }
+
+@media (max-width: 860px){
+  .mega-hero{ min-height: 54svh; }
+  .mega-hero .stack{ max-width: 92%; }
+}
