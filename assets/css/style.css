@@ -186,44 +186,52 @@ h3{font-size:20px;margin:0 0 6px}
   #nav-toggle:checked ~ .menu{ display:flex; }
   .nav .right-slot{ display:none; }
 }
-/* ===== Character hover pop (desktop) ===== */
-.profile{ position:relative; overflow:visible }
-.profile-pop{
-  position:absolute; left:calc(100% + 10px); top:0; width:320px;
-  background:var(--card); border:1px solid var(--stroke); border-radius:14px;
-  box-shadow:0 18px 60px rgba(0,0,0,.5);
-  padding:12px; display:none; z-index:80;
+/* ===== Character hover pop (desktop only) ===== */
+.grid-characters { overflow: visible; }
+.profile{
+  position: relative;
+  overflow: visible;           /* pop ko cut hone se bachao */
 }
-.profile:hover .profile-pop{ display:block }
+
+/* hidden by default + animate in */
+.profile-pop{
+  position: absolute; top: 0; left: calc(100% + 10px);
+  width: 320px;
+  background: var(--card);
+  border: 1px solid var(--stroke);
+  border-radius: 14px;
+  box-shadow: 0 18px 60px rgba(0,0,0,.5);
+  padding: 12px;
+  z-index: 60;
+
+  opacity: 0; visibility: hidden;
+  transform: translateY(6px) scale(.98);
+  transition: opacity .18s ease, transform .18s ease, visibility 0s linear .18s;
+  pointer-events: none;
+}
+.profile:hover .profile-pop{
+  opacity: 1; visibility: visible;
+  transform: translateY(0) scale(1);
+  transition: opacity .18s ease, transform .18s ease, visibility 0s;
+  pointer-events: auto;
+}
+
+/* popup inner */
 .profile-pop .pop-head{ display:flex; gap:12px; align-items:center }
-.profile-pop img{ width:72px; height:72px; object-fit:cover; border-radius:10px; border:1px solid var(--stroke) }
+.profile-pop img{
+  width:72px; height:72px; object-fit:cover;
+  border-radius:10px; border:1px solid var(--stroke)
+}
 .profile-pop h4{ margin:0; font-size:16px }
 .profile-pop p{ margin:6px 0 10px; color:var(--muted); font-size:13px }
 .profile-pop .btn{ padding:8px 10px; font-size:13px }
 
-@media (max-width: 1024px){
-  /* touch devices pe pop hide rakho */
-  .profile-pop{ display:none!important }
-}
-/* ===== Wide Feature Banner ===== */
-.feature-banner{ margin: 24px 0 8px; }
-.feature-banner .wrap{
-  position:relative; overflow:hidden; border-radius:16px;
-  border:1px solid var(--stroke); background:#0b0b0f;
-}
-.feature-banner img{
-  display:block; width:100%; height:auto; aspect-ratio: 16 / 6; object-fit:cover;
-}
-.feature-banner .overlay{
-  position:absolute; inset:0; display:flex; align-items:flex-end;
-  background: linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,.55));
-  padding: 18px;
-}
-.feature-banner .overlay h3{ margin:0; font-size:22px }
-.feature-banner .overlay .btn{ margin-left:auto }
-@media (max-width: 700px){
-  .feature-banner img{ aspect-ratio: 16 / 9; }
-  .feature-banner .overlay h3{ font-size:18px }
+/* Rightmost tiles ke liye flip (so it doesn't go off-screen) */
+.profile.pop-left .profile-pop{ left:auto; right: calc(100% + 10px); }
+
+/* Mobile/tablet (no hover) — only truly disable on non-hover devices */
+@media (hover: none){
+  .profile-pop{ display: none !important; }
 }
 /* ===== Bottom Follow Bar (Marvel style) ===== */
 body.has-followbar { padding-bottom: 56px; } /* content ko bar se upar push kare */
