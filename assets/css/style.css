@@ -328,10 +328,14 @@ body.has-followbar { padding-bottom: 56px; } /* content ko bar se upar push kare
   background: #08080a;
   border-bottom: 1px solid var(--stroke);
 }
-.mega-hero .bg{
-  position: absolute; inset: 0; z-index: -2;
-  background: center/cover no-repeat;
-  filter: saturate(1.05) contrast(1.02);
+/* Fix for hero background image fit */
+.mega-hero .bg {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-size: cover;        /* ensure it covers area */
+  background-position: center center; /* center focus */
+  background-repeat: no-repeat;
 }
 .mega-hero::after{
   content:""; position:absolute; inset:0; z-index:-1;
