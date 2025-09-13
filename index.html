@@ -67,7 +67,12 @@
 <!-- MARVEL-STYLE MEGA HERO -->
 <section class="mega-hero">
   <!-- Background Poster (replace this image path with your wide poster) -->
-  <div class="bg" style="background-image:url('assets/img/episode-1-banner.png');"></div>
+  <picture class="bg-img">
+  <!-- Optional: desktop-optimised wide image -->
+  <source media="(min-width: 1024px)" srcset="assets/img/episode-1-banner.jpg">
+  <!-- Mobile fallback -->
+  <img src="assets/img/episode-1-banner.png" alt="OGDOAD — Banner" class="mega-hero-img">
+</picture>
 
   <div class="container inner">
     <div class="stack">
