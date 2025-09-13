@@ -334,7 +334,7 @@ body.has-followbar { padding-bottom: 56px; } /* content ko bar se upar push kare
   inset: 0;
   z-index: -2;
   background-size: cover;        /* ensure it covers area */
-  background-position: center center; /* center focus */
+  background-position: center top; /* center focus */
   background-repeat: no-repeat;
 }
 .mega-hero::after{
