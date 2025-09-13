@@ -320,109 +320,50 @@ body.has-followbar { padding-bottom: 56px; } /* content ko bar se upar push kare
 @media (hover: none){
   .card-pop{ display: none !important; }
 }
-/* ===== Mega Hero (Marvel-style) ===== */
+/* ===== Mega Hero (Marvel-style) — FINAL (IMG-based) ===== */
 .mega-hero{
-  position: relative; isolation: isolate;
-  min-height: 64svh; /* tall but responsive */
-  display: grid; align-items: end;
+  position: relative;
+  overflow: hidden;
+  min-height: 64vh;
   background: #08080a;
   border-bottom: 1px solid var(--stroke);
 }
-/* Fix for hero background image fit */
-.mega-hero .bg {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  background-size: cover;        /* ensure it covers area */
-  background-position: center center; /* center focus */
-  background-repeat: no-repeat;
+.mega-hero-img{
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  object-position: center 32%; /* desktop focal point; tune 20–60% */
+  z-index: 0;
 }
 .mega-hero::after{
-  content:""; position:absolute; inset:0; z-index:-1;
+  content:""; position:absolute; inset:0; z-index:1;
   background:
     linear-gradient(180deg, rgba(0,0,0,0) 20%, rgba(0,0,0,.65) 88%),
     radial-gradient(120% 80% at 10% 10%, rgba(0,0,0,.55), transparent 60%);
 }
-.mega-hero .inner{
-  padding: 22px 0 28px;
-}
-.mega-hero .stack{
-  max-width: 720px;
-}
-.mega-hero .logo{
-  display:block; width:min(420px, 60vw);
-  height:auto; margin: 0 0 10px;
-}
+.mega-hero .inner{ position: relative; z-index: 2; padding: 22px 0 28px; }
+.mega-hero .stack{ max-width: 720px; }
 .mega-hero h1{
   font-family: "Bebas Neue", system-ui, sans-serif;
   letter-spacing:.02em; font-size: clamp(28px, 5vw, 46px);
   margin: 4px 0 6px;
 }
-.mega-hero .blurb{
-  color: var(--muted); max-width: 60ch; margin: 8px 0 14px; font-size: 15px;
-}
+.mega-hero .blurb{ color: var(--muted); max-width: 60ch; margin: 8px 0 14px; font-size: 15px; }
 .mega-hero .cta{ display:flex; flex-wrap:wrap; gap:10px; }
 .mega-hero .cta .btn{ padding:12px 16px; font-weight:700 }
 .mega-hero .cta .btn.secondary{ background:transparent; border:1px solid var(--stroke) }
-
-.mega-hero .dots{
-  display:flex; gap:8px; margin-top:14px;
-}
-.mega-hero .dot{
-  width:8px; height:8px; border-radius:999px;
-  background: rgba(255,255,255,.35);
-}
+.mega-hero .dots{ display:flex; gap:8px; margin-top:14px; }
+.mega-hero .dot{ width:8px; height:8px; border-radius:999px; background: rgba(255,255,255,.35); }
 .mega-hero .dot.active{ background:#fff; }
 
-@media (max-width: 860px){
-  .mega-hero{ min-height: 54svh; }
-  .mega-hero .stack{ max-width: 92%; }
-}
-/* ===== Desktop hero fit fixes ===== */
-@media (min-width: 1024px){
-  /* 1) Desktop height thoda bada, taaki image crop kam ho */
-  .mega-hero{ min-height: 68vh; }
-
-  /* 2) Background exact centering/focus (adjust as needed) */
-  .mega-hero .bg{
-    background-size: cover;          /* keep cover */
-    background-position: center 30%; /* try 30% focus; change to 40–60% if head is higher/lower */
-    background-repeat: no-repeat;
-  }
-
-  /* 3) Optional: maintain cinematic ratio so poster dikhe zyada */
-  .mega-hero .inner{ padding-bottom: 40px; }
-}
-
-/* Ultra-wide screens (21:9 etc) — zyada crop ho to */
-@media (min-width: 1440px){
-  .mega-hero{ min-height: 60vh; }        /* thoda kam height, less vertical crop */
-  .mega-hero .bg{ background-position: center 35%; }
-}
-
-/* If your key subject is near TOP, use this instead on desktop: */
-/*
-@media (min-width: 1024px){
-  .mega-hero .bg{ background-position: center top; }
-}
-*/
-/* IMG-based hero (bulletproof fit) */
-.mega-hero{ position: relative; overflow: hidden; }
-.bg-img{ position: absolute; inset: 0; z-index: -2; display: block; }
-.mega-hero-img{
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
-  object-fit: cover;           /* always cover */
-  object-position: center 32%; /* desktop focus (tune 20–60%) */
-}
-
-/* Mobile: different focus if needed */
 @media (max-width: 1023.98px){
   .mega-hero{ min-height: 52svh; }
   .mega-hero-img{ object-position: center top; }
 }
-
-/* Very wide screens */
+@media (min-width: 1024px){
+  .mega-hero{ min-height: 68vh; }
+  .mega-hero-img{ object-position: center 32%; }
+}
 @media (min-width: 1440px){
   .mega-hero{ min-height: 60vh; }
   .mega-hero-img{ object-position: center 38%; }
