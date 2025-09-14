@@ -382,10 +382,11 @@ body.has-followbar { padding-bottom: 56px; } /* content ko bar se upar push kare
   .mega-hero{ min-height: 54svh; }
   .mega-hero .stack{ max-width: 92%; }
 }
-/* ===== Preview Modal (Lightbox Reader) — FIXED SIZING ===== */
+/* ===== Preview Modal (Lightbox Reader) — STABLE DESKTOP + MOBILE ===== */
 .preview-modal{
   position: fixed; inset: 0; z-index: 2000;
-  display: none; padding: 24px; /* viewport padding */
+  display: none;
+  padding: 16px;                    /* viewport padding */
 }
 .preview-modal.active{
   display: flex;
@@ -393,18 +394,20 @@ body.has-followbar { padding-bottom: 56px; } /* content ko bar se upar push kare
 }
 .pv-backdrop{
   position: absolute; inset: 0;
-  background: rgba(0,0,0,.75);
+  background: rgba(0,0,0,.78);
   backdrop-filter: blur(4px);
 }
+
+/* Dialog as a grid: header | stage | footer  */
 .pv-dialog{
   position: relative; z-index: 1;
   width: min(1100px, 96vw);
-  max-height: 96vh; height: auto;             /* allow growth but cap by viewport */
+  height: min(92svh, 920px);        /* use svh for mobile chrome/safari */
   display: grid; grid-template-rows: auto 1fr auto;
   background: var(--bg-2);
   border: 1px solid var(--stroke);
   border-radius: 14px;
-  overflow: hidden;                            /* rounded corners */
+  overflow: hidden;
   box-shadow: 0 40px 120px rgba(0,0,0,.6);
 }
 .pv-close{
@@ -421,17 +424,25 @@ body.has-followbar { padding-bottom: 56px; } /* content ko bar se upar push kare
 .pv-head h3{ margin: 0; font-size: 18px; }
 .pv-meta{ color: var(--muted); font-size: 13px; }
 
+/* Stage must expand and allow the image to contain */
 .pv-stage{
   position: relative; background: #000;
+  min-height: 0;       /* allow grid child to shrink */
+  overflow: hidden;
   display: grid; place-items: center;
-  min-height: 0; overflow: hidden;            /* crucial: allow grid child to size inside */
   touch-action: pan-y;
 }
+
+/* Image sizing: fill available space but keep aspect via contain */
 #pv-img{
-  max-width: 100%; max-height: 100%;
-  width: auto; height: auto;                  /* true contain */
+  display: block;
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   object-fit: contain;
-  background: #000; user-select: none;
+  background: #000;
+  user-select: none;
 }
 
 .pv-lock{
@@ -454,14 +465,22 @@ body.has-followbar { padding-bottom: 56px; } /* content ko bar se upar push kare
 .pv-dots .dot{ width: 8px; height: 8px; border-radius: 999px; background: rgba(255,255,255,.25); }
 .pv-dots .dot.active{ background: #fff; }
 
-/* Short viewports / laptops with taskbars */
-@media (max-height: 740px){
-  .preview-modal{ padding: 12px; }
-  .pv-dialog{ max-height: 92vh; }
+/* --- MOBILE FIRST TUNING --- */
+@media (max-width: 720px){
+  .preview-modal{ padding: 8px; }
+  .pv-dialog{
+    width: 100vw;
+    height: 100dvh;                 /* full dynamic viewport */
+    max-height: 100dvh;
+    border-radius: 0;               /* edge-to-edge sheet on phones */
+  }
+  .pv-head h3{ font-size: 16px; }
 }
 
-/* Narrow phones */
-@media (max-width: 720px){
-  .pv-dialog{ max-height: 92vh; width: 96vw; }
-  .pv-head h3{ font-size: 16px; }
+/* --- SHORT VIEWPORTS / small laptops --- */
+@media (max-height: 740px){
+  .pv-dialog{
+    height: 92svh;                  /* keep inside chrome url bar dynamics */
+    max-height: 92svh;
+  }
 }
