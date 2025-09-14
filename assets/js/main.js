@@ -32,22 +32,34 @@ document.addEventListener('click', () => {
     return out;
   }
 
-  // Try candidates in order; resolve first that loads
-  function resolveImage(n){
-    return new Promise((resolve)=>{
-      const opts = buildVariants(n);
-      let i = 0, img = new Image();
-      const tryNext = () => {
-        if(i >= opts.length){ resolve(null); return; }
-        const url = opts[i++];
-        img = new Image();
-        img.onload = () => resolve(url);
-        img.onerror = tryNext;
-        img.src = url + `?v=${n}`; // cache-bust lightly
+function resolveImage(n){
+  return new Promise((resolve)=>{
+    // 1) Explicit override first (bulletproof)
+    if (PAGE_MAP[n]) {
+      const test = new Image();
+      test.onload = () => resolve(PAGE_MAP[n]);
+      test.onerror = () => {
+        // fallback to guessing if override path fails
+        tryNext();
       };
-      tryNext();
-    });
-  }
+      test.src = PAGE_MAP[n] + `?v=${Date.now()}`;
+      return;
+    }
+
+    // 2) Otherwise try variants
+    const opts = buildVariants(n);
+    let i = 0, img = new Image();
+    const tryNext = () => {
+      if(i >= opts.length){ resolve(null); return; }
+      const url = opts[i++];
+      img = new Image();
+      img.onload = () => resolve(url);
+      img.onerror = tryNext;
+      img.src = url + `?v=${Date.now()}`;
+    };
+    tryNext();
+  });
+}
 
   // Cache
   const RES = new Array(TOTAL+1).fill(null);  // 1..TOTAL
@@ -99,7 +111,7 @@ document.addEventListener('click', () => {
 
     renderDots();
     if(btnPrev) btnPrev.disabled = (pageIndex === 1);
-    if(btnNext) btnNext.disabled = (pageIndex >= FREE);
+    if(btnNext) btnNext.disabled = (pageIndex >= TOTAL);
   }
 
   async function primeFirst(){
