@@ -333,7 +333,7 @@ body.has-followbar { padding-bottom: 56px; } /* content ko bar se upar push kare
   position:absolute; inset:0;
   z-index: 0;                          /* was -2 */
   background-size: cover;
-  background-position: center top;
+  background-position: center top;     /* yahan 30%-60% bhi try kar sakte ho */
   background-repeat: no-repeat;
 }
 
@@ -347,7 +347,7 @@ body.has-followbar { padding-bottom: 56px; } /* content ko bar se upar push kare
 
 .mega-hero .inner{
   position: relative;                   /* add */
-  z-index: 2;                           /* add: text upar aaye */
+  z-index: 2;                           /* add: text hamesha upar रहे */
   padding: 22px 0 28px;
 }
 .mega-hero .stack{
