@@ -142,3 +142,159 @@ document.addEventListener('click', () => {
   // Prevent right-click save (casual)
   img.addEventListener('contextmenu', e=> e.preventDefault());
 })();
+// ===== Preview Modal Logic (robust paths + swipe) =====
+(function(){
+  // Episode -> pages: we'll generate names programmatically (1..9)
+  // Base folder path:
+  const BASE = 'assets/preview/';
+  const TOTAL = 9;
+  const FREE = 5;
+
+  // Build candidate path variants for a given index (1-based)
+  function candidates(n){
+    const s = String(n);
+    return [
+      `${BASE}page${s}.png`,
+      `${BASE}Page${s}.png`,
+      `${BASE}page${s}.PNG`,
+      `${BASE}Page${s}.PNG`,
+    ];
+  }
+
+  // Resolve an image URL by trying candidates in order
+  function resolveImage(n){
+    return new Promise((resolve)=>{
+      const opts = candidates(n);
+      let i = 0, img = new Image();
+      const tryNext = () => {
+        if(i >= opts.length){ resolve(null); return; }
+        const url = opts[i++];
+        img = new Image();
+        img.onload = () => resolve(url);
+        img.onerror = tryNext;
+        img.src = url;
+      };
+      tryNext();
+    });
+  }
+
+  // Pre-resolve all (first FREE quickly)
+  let RESOLVED = new Array(TOTAL+1).fill(null); // 1..TOTAL
+
+  async function primeImages(){
+    // resolve first FREE eagerly
+    for(let i=1;i<=FREE;i++){
+      if(!RESOLVED[i]) RESOLVED[i] = await resolveImage(i);
+    }
+  }
+
+  // DOM refs
+  const modal = document.getElementById('previewModal');
+  if(!modal) return;
+
+  const img = document.getElementById('pv-img');
+  const lock = document.getElementById('pv-lock');
+  const pageLbl = document.getElementById('pv-page');
+  const totalLbl = document.getElementById('pv-total');
+  const dotsWrap = document.getElementById('pv-dots');
+  const btnPrev = document.getElementById('pv-prev');
+  const btnNext = document.getElementById('pv-next');
+
+  let pageIndex = 1;     // 1-based now
+  const freeCount = FREE;
+
+  function renderDots(){
+    dotsWrap.innerHTML = '';
+    for(let i=1;i<=freeCount;i++){
+      const d = document.createElement('span');
+      d.className = 'dot' + (i===pageIndex ? ' active':'');
+      dotsWrap.appendChild(d);
+    }
+  }
+
+  async function showPage(n){
+    pageIndex = Math.max(1, Math.min(n, TOTAL));
+    const locked = pageIndex > freeCount;
+
+    // resolve URL (cached or try)
+    if(!RESOLVED[pageIndex]) RESOLVED[pageIndex] = await resolveImage(pageIndex);
+    const url = RESOLVED[pageIndex];
+
+    if(url){
+      img.setAttribute('src', url);
+    } else {
+      // fallback: show a simple “not found” state
+      img.removeAttribute('src');
+    }
+
+    img.style.filter = locked ? 'blur(2px) brightness(0.6)' : 'none';
+    lock.classList.toggle('hidden', !locked);
+
+    pageLbl.textContent = Math.min(pageIndex, freeCount);
+    totalLbl.textContent = String(freeCount);
+
+    renderDots();
+    btnPrev.disabled = (pageIndex === 1);
+    btnNext.disabled = (pageIndex >= freeCount);
+  }
+
+  async function openPreview(){
+    await primeImages();
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden','false');
+    document.body.style.overflow = 'hidden';
+    showPage(1);
+  }
+
+  function closePreview(){
+    modal.classList.remove('active');
+    modal.setAttribute('aria-hidden','true');
+    document.body.style.overflow = '';
+  }
+
+  // Open/close via click
+  document.addEventListener('click', (e)=>{
+    const opener = e.target.closest('[data-open-preview]');
+    if(opener){
+      e.preventDefault();
+      openPreview();
+      return;
+    }
+    if(e.target.dataset.close) closePreview();
+  });
+
+  btnPrev && btnPrev.addEventListener('click', (e)=>{ e.preventDefault(); showPage(pageIndex-1); });
+  btnNext && btnNext.addEventListener('click', (e)=>{ e.preventDefault(); showPage(pageIndex+1); });
+
+  // Keyboard nav
+  document.addEventListener('keydown', (e)=>{
+    if(!modal.classList.contains('active')) return;
+    if(e.key === 'Escape') closePreview();
+    if(e.key === 'ArrowRight') showPage(pageIndex+1);
+    if(e.key === 'ArrowLeft') showPage(pageIndex-1);
+  });
+
+  // Swipe support
+  let touchStartX = null, touchStartY = null;
+  const STAGE = modal.querySelector('.pv-stage');
+
+  STAGE.addEventListener('touchstart', (e)=>{
+    const t = e.touches[0];
+    touchStartX = t.clientX;
+    touchStartY = t.clientY;
+  }, {passive:true});
+
+  STAGE.addEventListener('touchend', (e)=>{
+    if(touchStartX == null) return;
+    const t = e.changedTouches[0];
+    const dx = t.clientX - touchStartX;
+    const dy = t.clientY - touchStartY;
+    if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)){
+      if(dx < 0) showPage(pageIndex+1); else showPage(pageIndex-1);
+    }
+    touchStartX = touchStartY = null;
+  }, {passive:true});
+
+  // Prevent casual save
+  img.addEventListener('contextmenu', e=> e.preventDefault());
+})();

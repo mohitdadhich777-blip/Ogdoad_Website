@@ -99,5 +99,37 @@
   </div>
 </footer>
 
+
+<!-- PREVIEW MODAL (Reusable) -->
+<div id="previewModal" class="preview-modal" aria-hidden="true" role="dialog" aria-modal="true">
+  <div class="pv-backdrop" data-close="1"></div>
+  <div class="pv-dialog" role="document" aria-labelledby="pv-title">
+    <button class="pv-close" aria-label="Close preview" data-close="1">✕</button>
+
+    <header class="pv-head">
+      <h3 id="pv-title">Episode 1 — Free Preview</h3>
+      <div class="pv-meta"><span id="pv-page">1</span> / <span id="pv-total">5</span></div>
+    </header>
+
+    <main class="pv-stage">
+      <img id="pv-img" alt="Preview page" draggable="false">
+      <div id="pv-lock" class="pv-lock hidden">
+        <h4>Get Full Access</h4>
+        <p>Free preview ends here. Unlock the full episode to continue.</p>
+        <div class="pv-cta">
+          <a class="btn primary" href="shop.html#ep1">Buy Episode 1</a>
+          <a class="btn ghost" href="episodes.html#ep1">Episode Details</a>
+        </div>
+      </div>
+    </main>
+
+    <footer class="pv-controls">
+      <button class="btn small" id="pv-prev" aria-label="Previous page">← Prev</button>
+      <div class="pv-dots" id="pv-dots"></div>
+      <button class="btn small" id="pv-next" aria-label="Next page">Next →</button>
+    </footer>
+  </div>
+</div>
+
 </body>
 </html>
