@@ -1,28 +1,58 @@
 /* Minimal menu noop so old behavior stays */
 document.addEventListener('click', ()=>{});
 
-/* ===== Preview Modal Logic — stable (5 free, total 9) ===== */
+/* ===== Preview Modal Logic — robust resolver (no layout change) ===== */
 (function(){
-  const TOTAL = 9;   // tumne 9 images dali hain
-  const FREE  = 5;
+  const TOTAL = 9;      // total pages
+  const FREE  = 5;      // free pages
 
-  // Exact filenames — yahi use honge (lowercase, .png)
-  const PAGES = [
-    'assets/preview/page1.png',
-    'assets/preview/page2.png',
-    'assets/preview/page3.png',
-    'assets/preview/page4.png',
-    'assets/preview/page5.png',
-    'assets/preview/page6.png',
-    'assets/preview/page7.png',
-    'assets/preview/page8.png',
-    'assets/preview/page9.png',
-  ];
+  // ---- Candidate URL builder (covers assets vs assests, case + ext) ----
+  const DIRS = ['assets/preview/', 'assests/preview/'];       // both spellings
+  const EXTS = ['png','PNG','jpg','JPG','jpeg','JPEG','webp','WEBP'];
 
-  // DOM
+  function candidates(n){
+    const s = String(n);
+    const s0 = n < 10 ? '0'+s : s;
+    const names = [
+      `page${s}`, `Page${s}`,
+      `page ${s}`, `Page ${s}`,
+      `page-${s}`, `Page-${s}`,
+      `page_${s}`, `Page_${s}`,
+      `page${s0}`, `Page${s0}`,
+      `page ${s0}`, `Page ${s0}`,
+      `page-${s0}`, `Page-${s0}`,
+      `page_${s0}`, `Page_${s0}`,
+    ];
+    const out = [];
+    for(const d of DIRS){
+      for(const nm of names){
+        for(const ext of EXTS){
+          out.push(`${d}${nm}.${ext}`);
+        }
+      }
+    }
+    return out;
+  }
+
+  function resolveImage(n){
+    return new Promise((resolve)=>{
+      const list = candidates(n);
+      let i = 0, img = new Image();
+      const tryNext = () => {
+        if(i >= list.length){ resolve(null); return; }
+        const url = list[i++];
+        img = new Image();
+        img.onload  = () => resolve(url);
+        img.onerror = tryNext;
+        img.src     = url + `?t=${Date.now()}`; // cache-bust
+      };
+      tryNext();
+    });
+  }
+
+  // DOM refs (already present)
   const modal   = document.getElementById('previewModal');
-  if(!modal) return; // page without modal
-
+  if(!modal) return;
   const img     = document.getElementById('pv-img');
   const lock    = document.getElementById('pv-lock');
   const pageLbl = document.getElementById('pv-page');
@@ -32,7 +62,9 @@ document.addEventListener('click', ()=>{});
   const btnNext = document.getElementById('pv-next');
   const STAGE   = modal.querySelector('.pv-stage');
 
-  let pageIndex = 1; // 1-based
+  // cache of resolved URLs
+  const RES = new Array(TOTAL+1).fill(null);
+  let pageIndex = 1;
 
   function renderDots(){
     dots.innerHTML = '';
@@ -48,34 +80,33 @@ document.addEventListener('click', ()=>{});
     lock.classList.toggle('hidden', !locked);
   }
 
-  function setImage(url, locked){
-    img.onerror = () => {
-      console.warn('[Preview] failed:', url);
-      img.style.display = 'none';
-      lock.classList.remove('hidden');
-      lock.querySelector('h4').textContent = 'Preview image missing';
-      lock.querySelector('p').textContent  = 'This page could not be loaded.';
-    };
-    img.onload = () => { img.style.display = 'block'; };
-    img.src = url + '?t=' + Date.now(); // cache-bust
-    applyLock(locked);
-  }
-
-  function showPage(n){
+  async function showPage(n){
     pageIndex = Math.max(1, Math.min(n, TOTAL));
     const locked = pageIndex > FREE;
-    const url = PAGES[pageIndex - 1];
 
-    if(url){ setImage(url, locked); }
-    else { img.style.display = 'none'; lock.classList.remove('hidden'); }
+    if(!RES[pageIndex]) RES[pageIndex] = await resolveImage(pageIndex);
+    const url = RES[pageIndex];
 
-    // Counter UI: 4/5 style (FREE tak count)
+    if(url){
+      img.onerror = () => {
+        img.style.display = 'none';
+        lock.classList.remove('hidden');
+      };
+      img.onload = () => { img.style.display = 'block'; };
+      img.src = url;                 // already cache-busted above
+      applyLock(locked);
+    }else{
+      // koi variant nahi mila
+      img.style.display = 'none';
+      lock.classList.remove('hidden');
+    }
+
     pageLbl.textContent  = Math.min(pageIndex, FREE);
     totalLbl.textContent = String(FREE);
     renderDots();
 
     btnPrev.disabled = (pageIndex === 1);
-    btnNext.disabled = (pageIndex >= TOTAL); // TOTAL tak navigation allow
+    btnNext.disabled = (pageIndex >= TOTAL);   // TOTAL tak navigate allowed
   }
 
   function openPreview(){
@@ -90,7 +121,7 @@ document.addEventListener('click', ()=>{});
     document.body.style.overflow = '';
   }
 
-  // Open / Close (delegation)
+  // Open/close hooks
   document.addEventListener('click', (e)=>{
     const opener = e.target.closest('[data-open-preview]');
     if(opener){ e.preventDefault(); openPreview(); return; }
@@ -109,12 +140,10 @@ document.addEventListener('click', ()=>{});
     if(e.key === 'ArrowLeft')  showPage(pageIndex-1);
   });
 
-  // Swipe (mobile)
+  // Swipe
   let sx=null, sy=null;
-  STAGE.addEventListener('touchstart', (e)=>{
-    const t=e.touches[0]; sx=t.clientX; sy=t.clientY;
-  }, {passive:true});
-  STAGE.addEventListener('touchend', (e)=>{
+  STAGE.addEventListener('touchstart', (e)=>{ const t=e.touches[0]; sx=t.clientX; sy=t.clientY; }, {passive:true});
+  STAGE.addEventListener('touchend',   (e)=>{
     if(sx==null) return;
     const t=e.changedTouches[0], dx=t.clientX-sx, dy=t.clientY-sy;
     if(Math.abs(dx)>40 && Math.abs(dx)>Math.abs(dy)){
@@ -123,6 +152,5 @@ document.addEventListener('click', ()=>{});
     sx=sy=null;
   }, {passive:true});
 
-  // Block right-click save
   img.addEventListener('contextmenu', e=> e.preventDefault());
 })();
