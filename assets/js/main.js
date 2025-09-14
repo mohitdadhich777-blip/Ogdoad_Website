@@ -142,29 +142,40 @@ document.addEventListener('click', () => {
   // Prevent right-click save (casual)
   img.addEventListener('contextmenu', e=> e.preventDefault());
 })();
-// ===== Preview Modal Logic (robust paths + swipe) =====
+// ===== Preview Modal Logic (robust paths + swipe + sizing) =====
 (function(){
-  // Episode -> pages: we'll generate names programmatically (1..9)
-  // Base folder path:
+  const TOTAL = 9;          // total images you placed
+  const FREE = 5;           // free pages
   const BASE = 'assets/preview/';
-  const TOTAL = 9;
-  const FREE = 5;
 
-  // Build candidate path variants for a given index (1-based)
-  function candidates(n){
+  // Build filename candidates for n (1-based)
+  function buildVariants(n){
     const s = String(n);
-    return [
-      `${BASE}page${s}.png`,
-      `${BASE}Page${s}.png`,
-      `${BASE}page${s}.PNG`,
-      `${BASE}Page${s}.PNG`,
+    const s0 = n < 10 ? '0' + s : s;          // leading zero
+    const names = [
+      `page${s}`, `Page${s}`,
+      `page ${s}`, `Page ${s}`,
+      `page-${s}`, `Page-${s}`,
+      `page_${s}`, `Page_${s}`,
+      `page${s0}`, `Page${s0}`,               // 01, 03 variants
+      `page ${s0}`, `Page ${s0}`,
+      `page-${s0}`, `Page-${s0}`,
+      `page_${s0}`, `Page_${s0}`,
     ];
+    const exts = ['png','PNG','jpg','JPG','jpeg','JPEG','webp','WEBP'];
+    const out = [];
+    for(const nm of names){
+      for(const ext of exts){
+        out.push(`${BASE}${nm}.${ext}`);
+      }
+    }
+    return out;
   }
 
-  // Resolve an image URL by trying candidates in order
+  // Try candidates in order; resolve first that loads
   function resolveImage(n){
     return new Promise((resolve)=>{
-      const opts = candidates(n);
+      const opts = buildVariants(n);
       let i = 0, img = new Image();
       const tryNext = () => {
         if(i >= opts.length){ resolve(null); return; }
@@ -172,25 +183,18 @@ document.addEventListener('click', () => {
         img = new Image();
         img.onload = () => resolve(url);
         img.onerror = tryNext;
-        img.src = url;
+        img.src = url + `?v=${n}`; // cache-bust lightly
       };
       tryNext();
     });
   }
 
-  // Pre-resolve all (first FREE quickly)
-  let RESOLVED = new Array(TOTAL+1).fill(null); // 1..TOTAL
+  // Cache
+  const RES = new Array(TOTAL+1).fill(null);  // 1..TOTAL
 
-  async function primeImages(){
-    // resolve first FREE eagerly
-    for(let i=1;i<=FREE;i++){
-      if(!RESOLVED[i]) RESOLVED[i] = await resolveImage(i);
-    }
-  }
-
-  // DOM refs
+  // DOM
   const modal = document.getElementById('previewModal');
-  if(!modal) return;
+  if(!modal) return;                           // page without modal
 
   const img = document.getElementById('pv-img');
   const lock = document.getElementById('pv-lock');
@@ -199,60 +203,67 @@ document.addEventListener('click', () => {
   const dotsWrap = document.getElementById('pv-dots');
   const btnPrev = document.getElementById('pv-prev');
   const btnNext = document.getElementById('pv-next');
+  const STAGE = modal.querySelector('.pv-stage');
 
-  let pageIndex = 1;     // 1-based now
-  const freeCount = FREE;
+  let pageIndex = 1;
 
   function renderDots(){
     dotsWrap.innerHTML = '';
-    for(let i=1;i<=freeCount;i++){
-      const d = document.createElement('span');
-      d.className = 'dot' + (i===pageIndex ? ' active':'');
-      dotsWrap.appendChild(d);
+    for(let i=1;i<=FREE;i++){
+      const dot = document.createElement('span');
+      dot.className = 'dot' + (i === pageIndex ? ' active' : '');
+      dotsWrap.appendChild(dot);
     }
   }
 
   async function showPage(n){
     pageIndex = Math.max(1, Math.min(n, TOTAL));
-    const locked = pageIndex > freeCount;
+    const locked = pageIndex > FREE;
 
-    // resolve URL (cached or try)
-    if(!RESOLVED[pageIndex]) RESOLVED[pageIndex] = await resolveImage(pageIndex);
-    const url = RESOLVED[pageIndex];
+    if(!RES[pageIndex]) RES[pageIndex] = await resolveImage(pageIndex);
+    const url = RES[pageIndex];
 
     if(url){
       img.setAttribute('src', url);
+      img.style.display = 'block';
     } else {
-      // fallback: show a simple “not found” state
-      img.removeAttribute('src');
+      // Graceful fallback if not found
+      img.style.display = 'none';
     }
 
     img.style.filter = locked ? 'blur(2px) brightness(0.6)' : 'none';
     lock.classList.toggle('hidden', !locked);
 
-    pageLbl.textContent = Math.min(pageIndex, freeCount);
-    totalLbl.textContent = String(freeCount);
+    pageLbl.textContent = Math.min(pageIndex, FREE);
+    totalLbl.textContent = String(FREE);
 
     renderDots();
-    btnPrev.disabled = (pageIndex === 1);
-    btnNext.disabled = (pageIndex >= freeCount);
+    if(btnPrev) btnPrev.disabled = (pageIndex === 1);
+    if(btnNext) btnNext.disabled = (pageIndex >= FREE);
+  }
+
+  async function primeFirst(){
+    // Resolve first FREE quickly
+    for(let i=1;i<=FREE;i++){
+      if(!RES[i]) RES[i] = await resolveImage(i);
+    }
   }
 
   async function openPreview(){
-    await primeImages();
+    await primeFirst();
     modal.classList.add('active');
-    modal.setAttribute('aria-hidden','false');
+    modal.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
-    showPage(1);
+    await showPage(1);
   }
 
   function closePreview(){
     modal.classList.remove('active');
-    modal.setAttribute('aria-hidden','true');
+    modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
   }
 
-  // Open/close via click
+  // Open/close via clicks
   document.addEventListener('click', (e)=>{
     const opener = e.target.closest('[data-open-preview]');
     if(opener){
@@ -260,39 +271,35 @@ document.addEventListener('click', () => {
       openPreview();
       return;
     }
-    if(e.target.dataset.close) closePreview();
+    if(e.target && e.target.dataset && e.target.dataset.close) closePreview();
   });
 
-  btnPrev && btnPrev.addEventListener('click', (e)=>{ e.preventDefault(); showPage(pageIndex-1); });
-  btnNext && btnNext.addEventListener('click', (e)=>{ e.preventDefault(); showPage(pageIndex+1); });
+  btnPrev && btnPrev.addEventListener('click', (e)=>{ e.preventDefault(); showPage(pageIndex - 1); });
+  btnNext && btnNext.addEventListener('click', (e)=>{ e.preventDefault(); showPage(pageIndex + 1); });
 
-  // Keyboard nav
+  // Keyboard navigation
   document.addEventListener('keydown', (e)=>{
     if(!modal.classList.contains('active')) return;
     if(e.key === 'Escape') closePreview();
-    if(e.key === 'ArrowRight') showPage(pageIndex+1);
-    if(e.key === 'ArrowLeft') showPage(pageIndex-1);
+    if(e.key === 'ArrowRight') showPage(pageIndex + 1);
+    if(e.key === 'ArrowLeft') showPage(pageIndex - 1);
   });
 
-  // Swipe support
-  let touchStartX = null, touchStartY = null;
-  const STAGE = modal.querySelector('.pv-stage');
-
+  // Swipe support (mobile)
+  let startX = null, startY = null;
   STAGE.addEventListener('touchstart', (e)=>{
-    const t = e.touches[0];
-    touchStartX = t.clientX;
-    touchStartY = t.clientY;
+    const t = e.touches[0]; startX = t.clientX; startY = t.clientY;
   }, {passive:true});
-
   STAGE.addEventListener('touchend', (e)=>{
-    if(touchStartX == null) return;
+    if(startX == null) return;
     const t = e.changedTouches[0];
-    const dx = t.clientX - touchStartX;
-    const dy = t.clientY - touchStartY;
+    const dx = t.clientX - startX;
+    const dy = t.clientY - startY;
     if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)){
-      if(dx < 0) showPage(pageIndex+1); else showPage(pageIndex-1);
+      if(dx < 0) showPage(pageIndex + 1);
+      else showPage(pageIndex - 1);
     }
-    touchStartX = touchStartY = null;
+    startX = startY = null;
   }, {passive:true});
 
   // Prevent casual save
