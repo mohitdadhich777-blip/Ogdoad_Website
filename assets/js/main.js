@@ -2,26 +2,59 @@
 document.addEventListener('click', () => {
   // no-op for now; CSS checkbox handles menu
 });
-// ===== Preview Modal Logic — SIMPLE & RELIABLE =====
+// ===== Preview Modal Logic (robust paths + swipe + sizing) =====
 (function(){
-  // ---- CONFIG: yahi actual file list set karo ----
-  // Make sure ye EXACT names assets/preview/ me maujood hon
-  const PAGES = [
-    'assets/preview/page1.png',
-    'assets/preview/page2.png',
-    'assets/preview/page3.png',
-    'assets/preview/page4.png',
-    'assets/preview/page5.png',
-    'assets/preview/page6.png',
-    'assets/preview/page7.png',
-    'assets/preview/page8.png',
-    'assets/preview/page9.png',
-  ];
-  const FREE = 5;
+  const TOTAL = 9;          // total images you placed
+  const FREE = 5;           // free pages
+  const BASE = 'assets/preview/';
 
-  // ---- DOM refs ----
+  // Build filename candidates for n (1-based)
+  function buildVariants(n){
+    const s = String(n);
+    const s0 = n < 10 ? '0' + s : s;          // leading zero
+    const names = [
+      `page${s}`, `Page${s}`,
+      `page ${s}`, `Page ${s}`,
+      `page-${s}`, `Page-${s}`,
+      `page_${s}`, `Page_${s}`,
+      `page${s0}`, `Page${s0}`,               // 01, 03 variants
+      `page ${s0}`, `Page ${s0}`,
+      `page-${s0}`, `Page-${s0}`,
+      `page_${s0}`, `Page_${s0}`,
+    ];
+    const exts = ['png','PNG','jpg','JPG','jpeg','JPEG','webp','WEBP'];
+    const out = [];
+    for(const nm of names){
+      for(const ext of exts){
+        out.push(`${BASE}${nm}.${ext}`);
+      }
+    }
+    return out;
+  }
+
+  // Try candidates in order; resolve first that loads
+  function resolveImage(n){
+    return new Promise((resolve)=>{
+      const opts = buildVariants(n);
+      let i = 0, img = new Image();
+      const tryNext = () => {
+        if(i >= opts.length){ resolve(null); return; }
+        const url = opts[i++];
+        img = new Image();
+        img.onload = () => resolve(url);
+        img.onerror = tryNext;
+        img.src = url + `?v=${n}`; // cache-bust lightly
+      };
+      tryNext();
+    });
+  }
+
+  // Cache
+  const RES = new Array(TOTAL+1).fill(null);  // 1..TOTAL
+
+  // DOM
   const modal = document.getElementById('previewModal');
-  if(!modal) return; // page without modal
+  if(!modal) return;                           // page without modal
 
   const img = document.getElementById('pv-img');
   const lock = document.getElementById('pv-lock');
@@ -32,11 +65,9 @@ document.addEventListener('click', () => {
   const btnNext = document.getElementById('pv-next');
   const STAGE = modal.querySelector('.pv-stage');
 
-  const TOTAL = PAGES.length;
-  let pageIndex = 1; // 1-based
+  let pageIndex = 1;
 
   function renderDots(){
-    if(!dotsWrap) return;
     dotsWrap.innerHTML = '';
     for(let i=1;i<=FREE;i++){
       const dot = document.createElement('span');
@@ -45,68 +76,54 @@ document.addEventListener('click', () => {
     }
   }
 
-  function setImg(src){
-    // Always show the <img> unless actual error aata hai
-    img.style.display = 'block';
-    img.style.filter = 'none';
-    img.removeAttribute('src'); // force reload
-
-    img.onerror = () => {
-      console.warn('[Preview] Failed to load:', src);
-      // Graceful fallback: message show karo
-      img.style.display = 'none';
-      lock.classList.remove('hidden');
-      lock.querySelector('h4').textContent = 'Preview image missing';
-      lock.querySelector('p').textContent = 'This page could not be loaded. Please try again or continue to Buy.';
-    };
-
-    img.onload = () => {
-      // restore lock text for normal gate
-      lock.querySelector('h4').textContent = 'Get Full Access';
-      lock.querySelector('p').textContent = 'Free preview ends here. Unlock the full episode to continue.';
-    };
-
-    img.src = src + '?v=' + Date.now(); // cache-bust
-  }
-
-  function showPage(n){
+  async function showPage(n){
     pageIndex = Math.max(1, Math.min(n, TOTAL));
     const locked = pageIndex > FREE;
 
-    const url = PAGES[pageIndex - 1];   // 0-based index
+    if(!RES[pageIndex]) RES[pageIndex] = await resolveImage(pageIndex);
+    const url = RES[pageIndex];
+
     if(url){
-      setImg(url);
+      img.setAttribute('src', url);
+      img.style.display = 'block';
     } else {
+      // Graceful fallback if not found
       img.style.display = 'none';
     }
 
-    // Gate: lock overlay for > FREE
+    img.style.filter = locked ? 'blur(2px) brightness(0.6)' : 'none';
     lock.classList.toggle('hidden', !locked);
-    if(locked){
-      img.style.filter = 'blur(2px) brightness(0.6)';
-    }
 
-    if(pageLbl) pageLbl.textContent = Math.min(pageIndex, FREE);
-    if(totalLbl) totalLbl.textContent = String(FREE);
+    pageLbl.textContent = Math.min(pageIndex, FREE);
+    totalLbl.textContent = String(FREE);
 
     renderDots();
     if(btnPrev) btnPrev.disabled = (pageIndex === 1);
     if(btnNext) btnNext.disabled = (pageIndex >= FREE);
   }
 
-  function openPreview(){
-    modal.classList.add('active');
-    modal.setAttribute('aria-hidden','false');
-    document.body.style.overflow = 'hidden';
-    showPage(1);
+  async function primeFirst(){
+    // Resolve first FREE quickly
+    for(let i=1;i<=FREE;i++){
+      if(!RES[i]) RES[i] = await resolveImage(i);
+    }
   }
+
+  async function openPreview(){
+    await primeFirst();
+    modal.classList.add('active');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    await showPage(1);
+  }
+
   function closePreview(){
     modal.classList.remove('active');
-    modal.setAttribute('aria-hidden','true');
+    modal.setAttribute('aria-hidden', 'true');
     document.body.style.overflow = '';
   }
 
-  // Open/close via click (index + episodes)
+  // Open/close via clicks
   document.addEventListener('click', (e)=>{
     const opener = e.target.closest('[data-open-preview]');
     if(opener){
@@ -117,11 +134,10 @@ document.addEventListener('click', () => {
     if(e.target && e.target.dataset && e.target.dataset.close) closePreview();
   });
 
-  // Buttons
   btnPrev && btnPrev.addEventListener('click', (e)=>{ e.preventDefault(); showPage(pageIndex - 1); });
   btnNext && btnNext.addEventListener('click', (e)=>{ e.preventDefault(); showPage(pageIndex + 1); });
 
-  // Keyboard
+  // Keyboard navigation
   document.addEventListener('keydown', (e)=>{
     if(!modal.classList.contains('active')) return;
     if(e.key === 'Escape') closePreview();
@@ -129,7 +145,7 @@ document.addEventListener('click', () => {
     if(e.key === 'ArrowLeft') showPage(pageIndex - 1);
   });
 
-  // Swipe (mobile)
+  // Swipe support (mobile)
   let startX = null, startY = null;
   STAGE.addEventListener('touchstart', (e)=>{
     const t = e.touches[0]; startX = t.clientX; startY = t.clientY;
