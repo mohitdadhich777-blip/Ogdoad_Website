@@ -1,144 +1,128 @@
-/* Minimal JS just for mobile menu */
-document.addEventListener('click', () => {
-  // no-op for now; CSS checkbox handles menu
-});
-// ===== Preview Modal Logic (with swipe support) =====
+/* Minimal menu noop so old behavior stays */
+document.addEventListener('click', ()=>{});
+
+/* ===== Preview Modal Logic — stable (5 free, total 9) ===== */
 (function(){
-  // Episode -> pages map (PNG paths as you placed)
-  const PREVIEWS = {
-    ep1: {
-      pages: [
-        'assets/preview/page1.png',
-        'assets/preview/page2.png',
-        'assets/preview/page3.png',
-        'assets/preview/page4.png',
-        'assets/preview/page5.png',
-        'assets/preview/page6.png',
-        'assets/preview/page7.png',
-        'assets/preview/page8.png',
-        'assets/preview/page9.png',
-      ],
-      free: 5,
-      buyUrl: 'shop.html#ep1',
-      detailsUrl: 'episodes.html#ep1',
-      title: 'Episode 1 — Free Preview'
-    }
-  };
+  const TOTAL = 9;   // tumne 9 images dali hain
+  const FREE  = 5;
 
-  const modal = document.getElementById('previewModal');
-  if(!modal) return;
+  // Exact filenames — yahi use honge (lowercase, .png)
+  const PAGES = [
+    'assets/preview/page1.png',
+    'assets/preview/page2.png',
+    'assets/preview/page3.png',
+    'assets/preview/page4.png',
+    'assets/preview/page5.png',
+    'assets/preview/page6.png',
+    'assets/preview/page7.png',
+    'assets/preview/page8.png',
+    'assets/preview/page9.png',
+  ];
 
-  const img = document.getElementById('pv-img');
-  const lock = document.getElementById('pv-lock');
+  // DOM
+  const modal   = document.getElementById('previewModal');
+  if(!modal) return; // page without modal
+
+  const img     = document.getElementById('pv-img');
+  const lock    = document.getElementById('pv-lock');
   const pageLbl = document.getElementById('pv-page');
-  const totalLbl = document.getElementById('pv-total');
-  const dotsWrap = document.getElementById('pv-dots');
+  const totalLbl= document.getElementById('pv-total');
+  const dots    = document.getElementById('pv-dots');
   const btnPrev = document.getElementById('pv-prev');
   const btnNext = document.getElementById('pv-next');
+  const STAGE   = modal.querySelector('.pv-stage');
 
-  let activeKey = null;
-  let pages = [];
-  let pageIndex = 0; // 0-based
-  let freeCount = 5;
+  let pageIndex = 1; // 1-based
 
   function renderDots(){
-    dotsWrap.innerHTML = '';
-    const count = Math.min(pages.length, freeCount);
-    for(let i=0;i<count;i++){
-      const d = document.createElement('span');
-      d.className = 'dot' + (i===pageIndex ? ' active':'');
-      dotsWrap.appendChild(d);
+    dots.innerHTML = '';
+    for(let i=1;i<=FREE;i++){
+      const el = document.createElement('span');
+      el.className = 'dot' + (i===pageIndex ? ' active' : '');
+      dots.appendChild(el);
     }
   }
 
-  function showPage(i){
-    pageIndex = Math.max(0, Math.min(i, pages.length-1));
-    const locked = pageIndex >= freeCount;
-
-    img.setAttribute('src', pages[pageIndex]);
+  function applyLock(locked){
     img.style.filter = locked ? 'blur(2px) brightness(0.6)' : 'none';
     lock.classList.toggle('hidden', !locked);
-
-    pageLbl.textContent = Math.min(pageIndex+1, freeCount);
-    totalLbl.textContent = freeCount.toString();
-
-    renderDots();
-    btnPrev.disabled = (pageIndex === 0);
-    btnNext.disabled = (pageIndex >= freeCount); // gate at free limit
   }
 
-  function openPreview(key){
-    const cfg = PREVIEWS[key];
-    if(!cfg) return;
-    activeKey = key;
-    pages = cfg.pages.slice();
-    freeCount = cfg.free || 5;
-    pageIndex = 0;
+  function setImage(url, locked){
+    img.onerror = () => {
+      console.warn('[Preview] failed:', url);
+      img.style.display = 'none';
+      lock.classList.remove('hidden');
+      lock.querySelector('h4').textContent = 'Preview image missing';
+      lock.querySelector('p').textContent  = 'This page could not be loaded.';
+    };
+    img.onload = () => { img.style.display = 'block'; };
+    img.src = url + '?t=' + Date.now(); // cache-bust
+    applyLock(locked);
+  }
 
-    document.getElementById('pv-title').textContent = cfg.title || 'Free Preview';
-    modal.querySelector('.pv-lock .pv-cta .primary').setAttribute('href', cfg.buyUrl);
-    modal.querySelector('.pv-lock .pv-cta .ghost').setAttribute('href', cfg.detailsUrl);
+  function showPage(n){
+    pageIndex = Math.max(1, Math.min(n, TOTAL));
+    const locked = pageIndex > FREE;
+    const url = PAGES[pageIndex - 1];
 
-    // Preload first few
-    pages.slice(0, freeCount).forEach(p => { const im = new Image(); im.src = p; });
+    if(url){ setImage(url, locked); }
+    else { img.style.display = 'none'; lock.classList.remove('hidden'); }
 
+    // Counter UI: 4/5 style (FREE tak count)
+    pageLbl.textContent  = Math.min(pageIndex, FREE);
+    totalLbl.textContent = String(FREE);
+    renderDots();
+
+    btnPrev.disabled = (pageIndex === 1);
+    btnNext.disabled = (pageIndex >= TOTAL); // TOTAL tak navigation allow
+  }
+
+  function openPreview(){
     modal.classList.add('active');
     modal.setAttribute('aria-hidden','false');
     document.body.style.overflow = 'hidden';
-    showPage(0);
+    showPage(1);
   }
-
   function closePreview(){
     modal.classList.remove('active');
     modal.setAttribute('aria-hidden','true');
     document.body.style.overflow = '';
   }
 
-  // Open/close handlers
+  // Open / Close (delegation)
   document.addEventListener('click', (e)=>{
     const opener = e.target.closest('[data-open-preview]');
-    if(opener){
-      e.preventDefault();
-      openPreview(opener.getAttribute('data-open-preview'));
-      return;
-    }
-    if(e.target.dataset.close) closePreview();
+    if(opener){ e.preventDefault(); openPreview(); return; }
+    if(e.target && e.target.dataset && e.target.dataset.close) closePreview();
   });
 
-  btnPrev && btnPrev.addEventListener('click', (e)=>{ e.preventDefault(); showPage(pageIndex-1); });
-  btnNext && btnNext.addEventListener('click', (e)=>{ e.preventDefault(); showPage(pageIndex+1); });
+  // Buttons
+  btnPrev.addEventListener('click', (e)=>{ e.preventDefault(); showPage(pageIndex-1); });
+  btnNext.addEventListener('click', (e)=>{ e.preventDefault(); showPage(pageIndex+1); });
 
-  // Keyboard nav
+  // Keyboard
   document.addEventListener('keydown', (e)=>{
     if(!modal.classList.contains('active')) return;
     if(e.key === 'Escape') closePreview();
     if(e.key === 'ArrowRight') showPage(pageIndex+1);
-    if(e.key === 'ArrowLeft') showPage(pageIndex-1);
+    if(e.key === 'ArrowLeft')  showPage(pageIndex-1);
   });
 
-  // Swipe support (touch)
-  let touchStartX = null;
-  let touchStartY = null;
-  const STAGE = modal.querySelector('.pv-stage');
-
+  // Swipe (mobile)
+  let sx=null, sy=null;
   STAGE.addEventListener('touchstart', (e)=>{
-    const t = e.touches[0];
-    touchStartX = t.clientX;
-    touchStartY = t.clientY;
+    const t=e.touches[0]; sx=t.clientX; sy=t.clientY;
   }, {passive:true});
-
   STAGE.addEventListener('touchend', (e)=>{
-    if(touchStartX == null) return;
-    const t = e.changedTouches[0];
-    const dx = t.clientX - touchStartX;
-    const dy = t.clientY - touchStartY;
-    // horizontal intent
-    if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)){
-      if(dx < 0) showPage(pageIndex+1); else showPage(pageIndex-1);
+    if(sx==null) return;
+    const t=e.changedTouches[0], dx=t.clientX-sx, dy=t.clientY-sy;
+    if(Math.abs(dx)>40 && Math.abs(dx)>Math.abs(dy)){
+      if(dx<0) showPage(pageIndex+1); else showPage(pageIndex-1);
     }
-    touchStartX = touchStartY = null;
+    sx=sy=null;
   }, {passive:true});
 
-  // Prevent right-click save (casual)
+  // Block right-click save
   img.addEventListener('contextmenu', e=> e.preventDefault());
 })();

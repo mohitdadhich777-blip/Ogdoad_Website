@@ -77,7 +77,7 @@
       <!-- Or just use text title like Marvel sometimes does on content pages -->
       
       <div class="cta">
-        <a class="btn primary" href="#preview" data-open-preview="ep1">Read Preview</a>
+        <a class="btn primary" href="#" data-open-preview="ep1">Read Preview</a>
         <a class="btn secondary" href="trailer.html">Watch Trailer</a>
       </div>
 
@@ -188,36 +188,35 @@
   </div>
 </footer>
 
-<!-- PREVIEW MODAL (Reusable across pages) -->
-<div id="previewModal" class="preview-modal" aria-hidden="true" role="dialog" aria-modal="true">
-  <div class="pv-backdrop" data-close="1"></div>
-  <div class="pv-dialog" role="document" aria-labelledby="pv-title">
-    <button class="pv-close" aria-label="Close preview" data-close="1">✕</button>
+<!-- ===== Preview Modal ===== -->
+<div class="preview-modal" id="previewModal" aria-hidden="true">
+  <div class="pv-backdrop" data-close="true"></div>
 
-    <header class="pv-head">
-      <h3 id="pv-title">Episode 1 — Free Preview</h3>
-      <div class="pv-meta">
-        <span id="pv-page">1</span> / <span id="pv-total">5</span>
-      </div>
-    </header>
+  <div class="pv-dialog" role="dialog" aria-label="Episode 1 — Free Preview">
+    <button class="pv-close" type="button" data-close="true" aria-label="Close">✕</button>
 
-    <main class="pv-stage">
-      <img id="pv-img" alt="Preview page" draggable="false">
-      <div id="pv-lock" class="pv-lock hidden">
+    <div class="pv-head">
+      <h3>EPISODE 1 — FREE PREVIEW</h3>
+      <div class="pv-meta"><span id="pv-page">1</span>/<span id="pv-total">5</span></div>
+    </div>
+
+    <div class="pv-stage">
+      <img id="pv-img" alt="Preview page">
+      <div class="pv-lock hidden" id="pv-lock">
         <h4>Get Full Access</h4>
         <p>Free preview ends here. Unlock the full episode to continue.</p>
         <div class="pv-cta">
-          <a class="btn primary" href="shop.html#ep1">Buy Episode 1</a>
-          <a class="btn ghost" href="episodes.html#ep1">Episode Details</a>
+          <a class="btn primary" href="shop.html">Buy Now</a>
+          <a class="btn" href="episodes.html">View Episodes</a>
         </div>
       </div>
-    </main>
+    </div>
 
-    <footer class="pv-controls">
-      <button class="btn small" id="pv-prev" aria-label="Previous page">← Prev</button>
+    <div class="pv-controls">
+      <button id="pv-prev" class="btn">← Prev</button>
       <div class="pv-dots" id="pv-dots"></div>
-      <button class="btn small" id="pv-next" aria-label="Next page">Next →</button>
-    </footer>
+      <button id="pv-next" class="btn">Next →</button>
+    </div>
   </div>
 </div>
 
