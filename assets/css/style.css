@@ -329,21 +329,25 @@ body.has-followbar { padding-bottom: 56px; } /* content ko bar se upar push kare
   border-bottom: 1px solid var(--stroke);
 }
 /* Fix for hero background image fit */
-.mega-hero .bg {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  background-size: cover;        /* ensure it covers area */
-  background-position: center top; /* center focus */
+.mega-hero .bg{
+  position:absolute; inset:0;
+  z-index: 0;                          /* was -2 */
+  background-size: cover;
+  background-position: center top;
   background-repeat: no-repeat;
 }
+
 .mega-hero::after{
-  content:""; position:absolute; inset:0; z-index:-1;
+  content:""; position:absolute; inset:0;
+  z-index: 1;                          /* was -1 */
   background:
     linear-gradient(180deg, rgba(0,0,0,0) 20%, rgba(0,0,0,.65) 88%),
     radial-gradient(120% 80% at 10% 10%, rgba(0,0,0,.55), transparent 60%);
 }
+
 .mega-hero .inner{
+  position: relative;                   /* add */
+  z-index: 2;                           /* add: text upar aaye */
   padding: 22px 0 28px;
 }
 .mega-hero .stack{
