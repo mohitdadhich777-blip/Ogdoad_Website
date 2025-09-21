@@ -329,21 +329,25 @@ body.has-followbar { padding-bottom: 56px; } /* content ko bar se upar push kare
   border-bottom: 1px solid var(--stroke);
 }
 /* Fix for hero background image fit */
-.mega-hero .bg {
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  background-size: cover;        /* ensure it covers area */
-  background-position: center top; /* center focus */
+.mega-hero .bg{
+  position:absolute; inset:0;
+  z-index: 0;                          /* was -2 */
+  background-size: cover;
+  background-position: center top;     /* yahan 30%-60% bhi try kar sakte ho */
   background-repeat: no-repeat;
 }
+
 .mega-hero::after{
-  content:""; position:absolute; inset:0; z-index:-1;
+  content:""; position:absolute; inset:0;
+  z-index: 1;                          /* was -1 */
   background:
     linear-gradient(180deg, rgba(0,0,0,0) 20%, rgba(0,0,0,.65) 88%),
     radial-gradient(120% 80% at 10% 10%, rgba(0,0,0,.55), transparent 60%);
 }
+
 .mega-hero .inner{
+  position: relative;                   /* add */
+  z-index: 2;                           /* add: text hamesha upar रहे */
   padding: 22px 0 28px;
 }
 .mega-hero .stack{
@@ -377,4 +381,59 @@ body.has-followbar { padding-bottom: 56px; } /* content ko bar se upar push kare
 @media (max-width: 860px){
   .mega-hero{ min-height: 54svh; }
   .mega-hero .stack{ max-width: 92%; }
+}
+/* ===== Preview Modal (comic reader) ===== */
+.preview-modal{position:fixed; inset:0; z-index:999; display:none;}
+.preview-modal.active{display:block;}
+.pv-backdrop{position:absolute; inset:0; background:rgba(0,0,0,.72); backdrop-filter: blur(4px);}
+.pv-dialog{
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:min(96vw, 980px); max-height:90vh;
+  background: var(--bg-2); border:1px solid var(--stroke);
+  border-radius:16px; box-shadow:0 30px 120px rgba(0,0,0,.65);
+  display:flex; flex-direction:column; overflow:hidden;
+}
+.pv-close{
+  position:absolute; right:12px; top:10px; z-index:3;
+  height:32px; width:32px; border-radius:8px; border:1px solid var(--stroke);
+  background:rgba(255,255,255,.06); color:#fff; font-weight:700; cursor:pointer;
+}
+.pv-head{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:12px 16px; border-bottom:1px solid var(--stroke); background:rgba(0,0,0,.3);
+}
+.pv-head h3{margin:0; font-family:'Bebas Neue',sans-serif; letter-spacing:.08em;}
+.pv-meta{font-weight:700; opacity:.9}
+
+.pv-stage{
+  position:relative; flex:1; min-height: 50vh;
+  display:grid; place-items:center; background:#0b0b0f;
+}
+#pv-img{
+  max-width:100%; max-height:84vh; width:auto; height:auto;
+  object-fit:contain; display:block;
+  transition:filter .2s ease;
+}
+.pv-lock{
+  position:absolute; inset:auto 16px 16px 16px;
+  background:rgba(0,0,0,.72); border:1px solid var(--stroke);
+  backdrop-filter: blur(2px);
+  border-radius:12px; padding:12px; text-align:center;
+}
+.pv-lock.hidden{display:none;}
+.pv-lock h4{margin:0 0 6px}
+.pv-cta{display:flex; gap:8px; justify-content:center; margin-top:8px}
+
+.pv-controls{
+  display:flex; align-items:center; justify-content:space-between;
+  padding:10px 12px; border-top:1px solid var(--stroke); background:rgba(0,0,0,.3);
+}
+.pv-dots{display:flex; gap:8px}
+.pv-dots .dot{width:8px;height:8px;border-radius:999px;background:rgba(255,255,255,.35)}
+.pv-dots .dot.active{background:#fff}
+
+@media (max-width: 600px){
+  .pv-dialog{width: 96vw; max-height: 92vh;}
+  #pv-img{max-height:78vh;}
+  .pv-lock{inset:auto 12px 12px 12px;}
 }
